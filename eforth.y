@@ -21,16 +21,21 @@ extern void yyerror(const char *s);
 
 %%
 
-base: BYE ENTER 
-    { printf("\b\bbye!\n"); exit(0); }
+base: BYE ENTER {
+      printf("bye!\n");
+      exit(0);
+    }
+
 ;
 
-number: NUMBER 
-      { }
+number: NUMBER {
+        push($1, num);
+      }
+;
 
 %%
 
 
 void yyerror(const char *s){
-    printf("[line %d] %s\n", yylineno, s);
+    printf(" not ok \n");
 }

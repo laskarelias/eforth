@@ -1,5 +1,6 @@
 %option noyywrap
 %option yylineno
+%option nounput
 
 %{
 #include <string.h>
@@ -8,11 +9,15 @@
 
 bye         bye
 enter       [\n]
-number      [0-9]{10}
+number      [0-9]{9}
+plus        +
+minus       -
+times       *
+cr          cr
 
 
 %%
 
-{bye}       { printf("ok "); return BYE; }
-{enter}     { printf("enter "); return ENTER; }
+{bye}       { return BYE; }
+{enter}     { return ENTER; }
 {number}    { yylval.no = atoi(yytext); return NUMBER; }
