@@ -17,16 +17,24 @@ void push(t_stack* s, int t, int v) {
 }
 
 t_item pop(t_stack* s) {
-    if (s->top) { --s->top; }
-    t_item i = s->items[s->top];
+    t_item null = {.type = invalid, .value = 0};
+    t_item i = s->top ? s->items[--s->top] : null;
     s->items = realloc(s->items, s->top * sizeof(t_item));
     return i;
 }
 
-void print(t_stack* s) {
+void dprint(t_stack* s) {
     for (int i = 0; i < s->top; i++) {
         printf("%d: %d with value %d\n", i, s->items[i].type, s->items[i].value);
     }
     printf("==\n");
+    return;
+}
+
+void print(t_stack* s) {
+    for (int i = 0; i < s->top; i++) {
+        printf(s->items[i].type ? "/%d " : "%d ", s->items[i].value);
+    }
+    printf("\n");
     return;
 }
