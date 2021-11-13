@@ -13,6 +13,7 @@
 [0-9]{1,9}    { yylval.no = atoi(yytext); return NUMBER; }
 [-+*\/]        { yylval.sym = yytext[0]; return MATH; }
 bye           { return BYE; }
+forgot        { return FORGOT; }
 \n            { return ENTER; }
 .             { }
 <<EOF>>       { printf("Ctrl-D\n bye!\n"); exit(0); }
