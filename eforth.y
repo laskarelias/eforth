@@ -6,6 +6,15 @@
 #include "stack.h"
 #define YYDEBUG 1
 
+#define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KBLU  "\x1B[34m"
+#define KMAG  "\x1B[35m"
+#define KCYN  "\x1B[36m"
+#define KWHT  "\x1B[37m"
+
 extern int yylineno;
 extern int yylex();
 extern int yyparse();
@@ -16,18 +25,31 @@ extern t_stack* stack;
 extern t_stack* statics;
 extern int error;
 
+void stack_underflow() {
+    printf(KRED "stack underflow" KNRM);
+    error = 1;
+}
+
 %}
 
 %union {
-    int no;
+    int  no;
     char sym;
 }
 
-%token <no> NUMBER;
+%token <no>  NUMBER;
 %token <sym> MATH;
-%token BYE;
-%token FORGOT;
-%token ENTER;
+%token       DOT;
+%token       EMIT;
+
+%token       DROP;
+%token       SWAP;
+%token       OVER;
+%token       ROT;
+
+%token       BYE;
+%token       FORGOT;
+%token       ENTER;
 
 %%
 
@@ -36,7 +58,7 @@ lines: lines line
      ;
 
 line: words ENTER {
-          printf(error ? "": " ok "); 
+          printf(error ? "" : " ok "); 
           print(stack);
           error = 0;
           printf("> ");
@@ -71,15 +93,52 @@ word: NUMBER {
                       push(stack, number, 0);
                       break;
               }
-          } else { 
-              printf(" Stack underflow");
-              error = 1;
-          }
+          } else { stack_underflow(); }
+      }
+    | DOT {
+          t_item a = pop(stack);
+          a.type == invalid ? stack_underflow() : printf("%c", a.value);
+      }
+    | EMIT {
+          t_item a = pop(stack);
+          a.type == invalid ? stack_underflow() : printf("%c", a.value);
+      }
+    | DROP {
+          t_item a = pop(stack);
+          if (a.type == invalid) { stack_underflow(); }
+      }
+    | SWAP {
+          t_item a = pop(stack);
+          t_item b = pop(stack);
+          if (a.type != invalid && b.type != invalid) {
+              push(stack, a.type, a.value);
+              push(stack, b.type, b.value);
+          } else { stack_underflow(); }
+      }
+
+    | OVER {
+          t_item a = pop(stack);
+          t_item b = pop(stack);
+          if (a.type != invalid && b.type != invalid) {
+              push(stack, b.type, b.value);
+              push(stack, a.type, a.value);
+              push(stack, b.type, b.value);
+          } else { stack_underflow(); } 
+      }
+    | ROT {
+          t_item a = pop(stack);
+          t_item b = pop(stack);
+          t_item c = pop(stack);
+          if (a.type != invalid && b.type != invalid && c.type != invalid) {
+              push(stack, b.type, b.value);
+              push(stack, a.type, a.value);
+              push(stack, c.type, c.value);
+          } else { stack_underflow(); }
       }
     | FORGOT {
-          printf(" uh");
+          printf(KWHT " uh");
           fflush(stdout);
-          for (int i = 0; i < rand() % 2 + 2; i++) {
+          for (int i = 0; i < rand() % 3 + 2; i++) {
               sleep(1);
               printf(".");
               fflush(stdout);
@@ -98,5 +157,5 @@ word: NUMBER {
 
 
 void yyerror(const char *s){
-    printf(" not ok\n");
+    printf(KYEL " not ok\n" KNRM);
 }

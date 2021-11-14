@@ -10,10 +10,25 @@
 
 %%
 
-[0-9]{1,9}    { yylval.no = atoi(yytext); return NUMBER; }
-[-+*\/]        { yylval.sym = yytext[0]; return MATH; }
+[0-9]{1,9}    { yylval.no = atoi(yytext); 
+                return NUMBER;
+              }
+[-+*\/]       { yylval.sym = yytext[0];
+                return MATH;
+              }
+[\.]          { return DOT; }
+emit          { return EMIT; }
+
+drop          { return DROP; }
+swap          { return SWAP; }
+over          { return OVER; }
+rot           { return ROT; }
+
 bye           { return BYE; }
 forgot        { return FORGOT; }
 \n            { return ENTER; }
 .             { }
-<<EOF>>       { printf("Ctrl-D\n bye!\n"); exit(0); }
+<<EOF>>       { printf("Ctrl-D\n bye!\n"); 
+                exit(0); 
+              }
+
