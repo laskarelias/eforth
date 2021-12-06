@@ -22,7 +22,10 @@ int main() {
     time_t t;
     srand((unsigned) time(&t));
 
-    do { printf("> "); yyparse(); } 
+    do { 
+        printf("> "); 
+        yyparse(); 
+    } 
     while (!feof(stdin));
 
     return 0;

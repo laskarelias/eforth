@@ -18,6 +18,8 @@
 extern int yylineno;
 extern int yylex();
 extern int yyparse();
+extern void yyrestart(FILE* f);
+extern FILE* yyin;
 
 extern void yyerror(const char *s);
 
@@ -33,8 +35,9 @@ void stack_underflow() {
 %}
 
 %union {
-    int  no;
-    char sym;
+    int   no;
+    char  sym;
+    char  str[32];
 }
 
 %token <no>  NUMBER;
@@ -49,6 +52,8 @@ void stack_underflow() {
 
 %token       BYE;
 %token       FORGOT;
+%token       CLEAR;
+%token <str> WORD;
 %token       ENTER;
 
 %%
@@ -135,6 +140,10 @@ word: NUMBER {
               push(stack, c.type, c.value);
           } else { stack_underflow(); }
       }
+    | WORD {
+          printf(KMAG " %s ? " KNRM "\n> ", $1);
+          yyrestart(yyin);
+      }
     | FORGOT {
           printf(KWHT " uh");
           fflush(stdout);
@@ -144,8 +153,11 @@ word: NUMBER {
               fflush(stdout);
           }
           sleep(1);
-          printf(" ");
+          printf(" " KNRM);
           error = 1;
+      }
+    | CLEAR {
+          printf("\033[2J\033[H");
       }
     | BYE {
           printf(" bye!\n");

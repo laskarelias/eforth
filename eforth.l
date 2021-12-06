@@ -26,8 +26,13 @@ rot           { return ROT; }
 
 bye           { return BYE; }
 forgot        { return FORGOT; }
+clear         { return CLEAR; }
 \n            { return ENTER; }
-.             { }
+[^ \t\n]*     { strncpy(yylval.str, yytext, 31);
+                yylval.str[31] = '\0';
+                return WORD; 
+              }
+[ \t]*        { }
 <<EOF>>       { printf("Ctrl-D\n bye!\n"); 
                 exit(0); 
               }
