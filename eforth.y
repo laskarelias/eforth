@@ -28,8 +28,8 @@ extern t_stack* statics;
 extern int error;
 
 void stack_underflow() {
-    printf(KRED "stack underflow" KNRM);
-    error = 1;
+    printf(KRED " stack underflow" KNRM "\n> ");
+    yyrestart(yyin);
 }
 
 %}
@@ -148,11 +148,11 @@ word: NUMBER {
           printf(KWHT " uh");
           fflush(stdout);
           for (int i = 0; i < rand() % 3 + 2; i++) {
-              sleep(1);
+              //sleep(1);
               printf(".");
               fflush(stdout);
           }
-          sleep(1);
+          //sleep(1);
           printf(" " KNRM);
           error = 1;
       }
