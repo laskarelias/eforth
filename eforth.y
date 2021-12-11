@@ -27,6 +27,8 @@ extern t_stack* stack;
 extern t_stack* statics;
 extern int error;
 
+extern int new_def;
+
 void stack_underflow() {
     printf(KRED " stack underflow" KNRM "\n> ");
     yyrestart(yyin);
@@ -83,7 +85,7 @@ words: words word
      ;
 
 word: NUMBER { 
-          push(stack, number, $1);
+          push(stack, number, $1, "\0");
       }
     | MATH { 
           t_item a = pop(stack);
@@ -91,19 +93,19 @@ word: NUMBER {
           if (a.type != invalid && b.type != invalid) {
               switch ($1) {
                   case '+':
-                      push(stack, number, b.value + a.value);
+                      push(stack, number, b.value + a.value, "\0");
                       break;
                   case '-':
-                      push(stack, number, b.value - a.value);
+                      push(stack, number, b.value - a.value, "\0");
                       break;
                   case '*':
-                      push(stack, number, b.value * a.value);
+                      push(stack, number, b.value * a.value, "\0");
                       break;
                   case '/':
-                      push(stack, number, b.value / a.value);
+                      push(stack, number, b.value / a.value, "\0");
                       break;
                   default:
-                      push(stack, number, 0);
+                      push(stack, number, 0, "\0");
                       break;
               }
           } else { stack_underflow(); }
@@ -124,8 +126,8 @@ word: NUMBER {
           t_item a = pop(stack);
           t_item b = pop(stack);
           if (a.type != invalid && b.type != invalid) {
-              push(stack, a.type, a.value);
-              push(stack, b.type, b.value);
+              push(stack, a.type, a.value, NULL);
+              push(stack, b.type, b.value, NULL);
           } else { stack_underflow(); }
       }
 
@@ -133,9 +135,9 @@ word: NUMBER {
           t_item a = pop(stack);
           t_item b = pop(stack);
           if (a.type != invalid && b.type != invalid) {
-              push(stack, b.type, b.value);
-              push(stack, a.type, a.value);
-              push(stack, b.type, b.value);
+              push(stack, b.type, b.value, NULL);
+              push(stack, a.type, a.value, NULL);
+              push(stack, b.type, b.value, NULL);
           } else { stack_underflow(); } 
       }
     | ROT {
@@ -143,18 +145,30 @@ word: NUMBER {
           t_item b = pop(stack);
           t_item c = pop(stack);
           if (a.type != invalid && b.type != invalid && c.type != invalid) {
-              push(stack, b.type, b.value);
-              push(stack, a.type, a.value);
-              push(stack, c.type, c.value);
+              push(stack, b.type, b.value, NULL);
+              push(stack, a.type, a.value, NULL);
+              push(stack, c.type, c.value, NULL);
           } else { stack_underflow(); }
       }
     | WORD {
-          printf(KMAG " %s ? " KNRM "\n> ", $1);
-          yyrestart(yyin);
+          if (new_def) {  
+              printf(" == new_def! == ");
+              push(statics, function, 0, $1);
+              new_def = 0;
+          } else { 
+              int found = seek(statics, function, 0, $1); 
+              if (found == -1) {  
+                  printf(KMAG " %s ? " KNRM "\n> ", $1);
+                  yyrestart(yyin);
+              }
+          }
+      }  
+
+    | COLON {
+          new_def = 1;
       }
     | FORGOT {
-          printf(KWHT " uh");
-          printf(" " KNRM);
+          printf(KWHT " uh " KNRM);
       }
     | CLEAR {
           printf("\033[2J\033[H");

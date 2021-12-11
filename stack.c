@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "stack.h"
 
 t_stack* stack_new() {   
@@ -10,14 +11,30 @@ t_stack* stack_new() {
     return s;
 }
 
-void push(t_stack* s, int t, int v) {
+void push(t_stack* s, int t, int v, char* n) {
     s->items = realloc(s->items, ++s->top * sizeof(t_item));
     s->items[s->top - 1].value = v;
     s->items[s->top - 1].type = t;
+    strncpy(s->items[s->top - 1].name, n, 31);
+    s->items[s->top - 1].name[31] = '\0';
+}
+
+int seek(t_stack* s, int t, int v, char* n) {
+    for (int i = s->top; i == 0; i--) {
+        switch(t) {
+            case number:
+                if (s->items[i].value == v) { return i; }
+                break;
+            default:
+                if (!(strcmp(s->items[i].name, n))) { return i; }
+                break;
+        }
+    }
+    return -1;
 }
 
 t_item pop(t_stack* s) {
-    t_item null = {.type = invalid, .value = 0};
+    t_item null = {.type = invalid, .value = 0, .name = "\0"};
     t_item i = s->top ? s->items[--s->top] : null;
     s->items = realloc(s->items, s->top * sizeof(t_item));
     return i;

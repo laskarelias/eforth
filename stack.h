@@ -6,6 +6,7 @@ enum type {invalid = -1, number = 0, function, variable, constant};
 typedef struct item {
     int type;
     int value;
+    char name[32];
 } t_item;
 
 typedef struct stack {
@@ -15,7 +16,8 @@ typedef struct stack {
 
 t_stack* stack_new();
 
-void push(t_stack* s, int t, int v);
+void push(t_stack* s, int t, int v, char* n);
+int seek(t_stack* s, int t, int v, char* n);
 t_item pop(t_stack* s);
 void print(t_stack* s);
 void dprint(t_stack* s);
