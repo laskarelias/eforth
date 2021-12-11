@@ -17,6 +17,7 @@
                 return MATH;
               }
 [\.]          { return DOT; }
+[:]           { return COLON; }
 emit          { return EMIT; }
 
 drop          { return DROP; }

@@ -43,6 +43,7 @@ void stack_underflow() {
 %token <no>  NUMBER;
 %token <sym> MATH;
 %token       DOT;
+%token       COLON;
 %token       EMIT;
 
 %token       DROP;
@@ -62,12 +63,19 @@ lines: lines line
      | line
      ;
 
+
 line: words ENTER {
           printf(error ? "" : " ok "); 
           print(stack);
           error = 0;
           printf("> ");
       }
+    | ENTER { 
+          printf(" ok ");
+          print(stack);
+          error = 0;
+          printf("> ");
+    }
     ;
 
 words: words word
@@ -146,15 +154,7 @@ word: NUMBER {
       }
     | FORGOT {
           printf(KWHT " uh");
-          fflush(stdout);
-          for (int i = 0; i < rand() % 3 + 2; i++) {
-              //sleep(1);
-              printf(".");
-              fflush(stdout);
-          }
-          //sleep(1);
           printf(" " KNRM);
-          error = 1;
       }
     | CLEAR {
           printf("\033[2J\033[H");
