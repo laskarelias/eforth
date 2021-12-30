@@ -42,7 +42,7 @@ t_item pop(t_stack* s) {
 
 void dprint(t_stack* s) {
     for (int i = 0; i < s->top; i++) {
-        printf("%d: %d with value %d\n", i, s->items[i].type, s->items[i].value);
+        printf("%s: %d with value %d\n", s->items[i].name, s->items[i].type, s->items[i].value);
     }
     printf("==\n");
     return;

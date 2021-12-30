@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "stack.h"
 
-extern int yyparse();
+extern int yylex();
 
 t_stack* stack;
 t_stack* statics;
@@ -10,9 +10,6 @@ int error;
 int new_def;
 
 int main() {
-    #ifdef YYDEBUG
-        yydebug = 1;
-    #endif
     printf(" bye or Ctrl-D to exit\n");
     error = 0;
     new_def = 0;
@@ -22,7 +19,7 @@ int main() {
 
     do { 
         printf("> "); 
-        yyparse(); 
+        yylex();
     } 
     while (!feof(stdin));
 
