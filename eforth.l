@@ -114,7 +114,8 @@ rot                             { t_item a = pop(stack);
                                 }
 debug                           { dprint(stack); dprint(statics); }
 bye                             { printf(" bye!\n"); exit(0); }
-forgot                          { //TODO }
+forgot                          { //TODO 
+                                }
 clear                           { printf("\033[2J\033[H"); }
 
 <*>\n                           { printf(" ok "); print(stack); printf("> "); }
