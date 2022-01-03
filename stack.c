@@ -20,14 +20,10 @@ void push(t_stack* s, int t, int v, char* n) {
 }
 
 int seek(t_stack* s, int t, int v, char* n) {
-    for (int i = s->top; i == 0; i--) {
+    for (int i = s->top; i > -1; i--) {
         switch(t) {
-            case number:
-                if (s->items[i].value == v) { return i; }
-                break;
-            default:
-                if (!(strcmp(s->items[i].name, n))) { return i; }
-                break;
+            case number: if (s->items[i].value == v)         { return i; } break;
+            default:     if (!(strcmp(s->items[i].name, n))) { return i; } break;
         }
     }
     return -1;
@@ -41,17 +37,13 @@ t_item pop(t_stack* s) {
 }
 
 void dprint(t_stack* s) {
-    for (int i = 0; i < s->top; i++) {
-        printf("%s: %d with value %d\n", s->items[i].name, s->items[i].type, s->items[i].value);
-    }
+    for (int i = 0; i < s->top; i++) { printf("%s: %d with value %d\n", s->items[i].name, s->items[i].type, s->items[i].value); }
     printf("==\n");
     return;
 }
 
 void print(t_stack* s) {
-    for (int i = 0; i < s->top; i++) {
-        printf(s->items[i].type ? "/%d " : "%d ", s->items[i].value);
-    }
+    for (int i = 0; i < s->top; i++) { printf(s->items[i].type ? "/%d " : "%d ", s->items[i].value); }
     printf("\n");
     return;
 }

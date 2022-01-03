@@ -108,27 +108,24 @@ rot                             { t_item a = pop(stack);
                                   t_item c = pop(stack);
                                   if (a.type != invalid && b.type != invalid && c.type != invalid) {
                                       push(stack, b.type, b.value, b.name);
-                                      push(stack, a.type, a.value, b.name);
-                                      push(stack, c.type, c.value, b.name);
+                                      push(stack, a.type, a.value, a.name);
+                                      push(stack, c.type, c.value, c.name);
                                   } else { printerr(1, KRED "stack underflow"); }
                                 }
 debug                           { dprint(stack); dprint(statics); }
-bye                             { printf(" bye!\n");
-                                  exit(0);
-                                }
-forgot                          { //TODO
-                                }
+bye                             { printf(" bye!\n"); exit(0); }
+forgot                          { //TODO }
 clear                           { printf("\033[2J\033[H"); }
 
-\n                              { printf(" ok "); print(stack); printf("> "); }
+<*>\n                           { printf(" ok "); print(stack); printf("> "); }
 <BEGIN_DEF>[^ \t\n]{1,31}       { strncpy(temp, yytext, 31);
                                   temp[31] = '\0';
                                   push(statics, function, 0, temp);
                                   BEGIN(IN_DEF);
                                 }
-[^ \t\n]{1,31}                  { strncpy(temp, yytext, 31);
+<INITIAL>[^ \t\n]{1,31}         { strncpy(temp, yytext, 31);
                                   temp[31] = '\0';
-                                  seek(statics, 0, 0, yytext) ? printf(" okay. ") : printerr(3, KMAG, temp, " ?"); }
-[ \t]*                          { }
-<<EOF>>                         { printf("Ctrl-D\n bye!\n"); exit(0); }
+                                  seek(statics, function, 0, temp) == -1 ? printerr(3, KMAG, temp, " ?") : printf("oookay.\n") ; }
+<*>[ \t]*                       { }
+<*><<EOF>>                      { printf("Ctrl-D\n bye!\n"); exit(0); }
 
